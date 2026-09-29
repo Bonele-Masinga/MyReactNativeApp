@@ -253,7 +253,7 @@ function SelectCoursesScreen({ navigation, route }: { navigation: any; route: an
   );
 }
 
-// --- SCREEN 3: Interactive Dynamic Wishlist Manager ---
+// SCREEN 3: Interactive Dynamic Wishlist Manager 
 function ManageEnrollmentsScreen() {
   const [customNotes, setCustomNotes] = useState<string[]>([]);
   const [txtInput, setTxtInput] = useState<string>('');
@@ -269,7 +269,7 @@ function ManageEnrollmentsScreen() {
           <View style={styles.mainPicture}>
             <Image
               style={styles.bannerImage}
-              source={require('./images/hero.png')} // Replace with local image asset
+              source={require('./images/logo.png')} 
               resizeMode="contain"
             />
           </View>
@@ -346,12 +346,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   imageSize: {
-    width: 250,
-    height: 180,
+    width: 700,
+    height: 400,
   },
   bannerImage: {
-    width: 300,
-    height: 120,
+    width: 600,
+    height: 400,
     alignSelf: 'center',
   },
   inputFlex: {
