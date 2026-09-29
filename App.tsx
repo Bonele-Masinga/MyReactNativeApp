@@ -145,7 +145,7 @@ function HomeScreen({ navigation }: { navigation: any }) {
   );
 }
 
-// --- SCREEN 2: Course Selection & Discount Calculation ---
+// SCREEN 2: Course Selection & Discount Calculation
 function SelectCoursesScreen({ navigation, route }: { navigation: any; route: any }) {
   const { userName, userSurname, userPhone } = route.params;
   const [selectedCourseId, setSelectedCourseId] = useState<string>('1');
@@ -188,7 +188,7 @@ function SelectCoursesScreen({ navigation, route }: { navigation: any; route: an
   const totals = calculateTotal();
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: '#F9F9F9', padding: 16 }}>
+    <ScrollView style={{ flex: 1, backgroundColor: 'rgb(75, 35, 18)', padding: 16 }}>
       <Text style={styles.detailsHeader}>
         Client: {userName} {userSurname} ({userPhone})
       </Text>
@@ -205,7 +205,8 @@ function SelectCoursesScreen({ navigation, route }: { navigation: any; route: an
                 color="#2E7D32"
               />
               <Text style={styles.radioLabel}>
-                {course.name} ({course.type}) - R{course.fee}
+                {course.name} ({course.type}) - R{course.fee} 
+
               </Text>
             </View>
           ))}
@@ -221,7 +222,7 @@ function SelectCoursesScreen({ navigation, route }: { navigation: any; route: an
         <View key={item.id} style={styles.courseCard}>
           <View>
             <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{item.name}</Text>
-            <Text style={{ color: '#666' }}>
+            <Text style={{ color: '#FFFFFF' }}>
               {item.type} Programme | R{item.fee}
             </Text>
           </View>
@@ -274,7 +275,7 @@ function ManageEnrollmentsScreen() {
             />
           </View>
           <Text style={styles.welcomeText}>Special Requests & Goals</Text>
-          <Text style={{ textAlign: 'center', color: '#555', marginBottom: 15 }}>
+          <Text style={{ textAlign: 'center', color: '#FFFFFF', marginBottom: 15 }}>
             Add custom notes or specific pet goals for your instructor:
           </Text>
 
@@ -284,6 +285,7 @@ function ManageEnrollmentsScreen() {
               placeholder="e.g. House training advice for puppy"
               onChangeText={(text) => setTxtInput(text)}
               value={txtInput}
+            
             />
             <Button
               title="Add Note"
@@ -319,7 +321,7 @@ function ManageEnrollmentsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'rgb(75, 35, 18)',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -336,7 +338,7 @@ const styles = StyleSheet.create({
   },
   subHeadingText: {
     fontSize: 14,
-    color: '#666666',
+    color: '#b8b8b8',
     textAlign: 'center',
     marginBottom: 20,
   },
@@ -344,14 +346,23 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     justifyContent: 'center',
     alignItems: 'center',
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    borderWidth: 4,
+    borderColor: '#2E7D32',
+    backgroundColor: '#FFFFFF',
+    overflow: 'hidden',
+    marginVertical: 15,
+    
   },
   imageSize: {
     width: 700,
-    height: 400,
+    height: 500,
   },
   bannerImage: {
-    width: 600,
-    height: 400,
+    width: 700,
+    height: 500,
     alignSelf: 'center',
   },
   inputFlex: {
@@ -362,7 +373,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   headingText: {
-    color: '#333333',
+    color: '#ffffff',
     fontWeight: 'bold',
     fontSize: 15,
     width: '35%',
@@ -373,7 +384,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     padding: 8,
     width: '60%',
-    color: '#333333',
+    color: '#fffcfc',
   },
   redError: {
     fontSize: 14,
@@ -397,7 +408,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 10,
     marginBottom: 8,
-    color: '#333',
+    color: '#2E7D32',
   },
   radioContainer: {
     backgroundColor: '#FFFFFF',
@@ -415,7 +426,7 @@ const styles = StyleSheet.create({
   },
   radioLabel: {
     fontSize: 14,
-    color: '#333',
+    color: '#2E7D32',
   },
   courseCard: {
     flexDirection: 'row',
@@ -456,7 +467,7 @@ const styles = StyleSheet.create({
   appContainer: {
     flex: 1,
     paddingHorizontal: 16,
-    backgroundColor: '#FFF',
+    backgroundColor: 'rgb(75, 35, 18)',
   },
   inputContainer: {
     flexDirection: 'row',
@@ -465,8 +476,9 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   textInput: {
+    color: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#CCCCCC',
+    borderColor: '#ffffff',
     borderRadius: 6,
     width: '70%',
     padding: 8,
@@ -476,7 +488,7 @@ const styles = StyleSheet.create({
   },
   skillText: {
     fontSize: 14,
-    color: '#333',
+    color: '#FFFFFF',
     width: '75%',
   },
   deleteButton: {
