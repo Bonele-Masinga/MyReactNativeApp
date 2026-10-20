@@ -1,8 +1,7 @@
-
 import React, { ReactNode, useState, useRef, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { StyleSheet,Text,View,TextInput,Button,Image,ScrollView,ViewStyle,TouchableOpacity,} from 'react-native';
+import {StyleSheet,Text,View,TextInput,Button,Image,ScrollView,ViewStyle,TouchableOpacity,Alert,} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Animated } from 'react-native';
 import { RadioButton } from 'react-native-paper';
@@ -44,9 +43,9 @@ export default function App() {
           options={{ title: 'Select Courses & Quote' }}
         />
         <Stack.Screen
-          name="ManageEnrollments"
-          component={ManageEnrollmentsScreen}
-          options={{ title: 'Manage Course Wishlist' }}
+          name="Feedback"
+          component={FeedbackScreen}
+          options={{ title: 'Contact & Feedback' }}
         />
       </Stack.Navigator>
     </NavigationContainer>
@@ -62,10 +61,11 @@ function isEmpty(value: string) {
   );
 }
 
-// SCREEN 1: User Profile & Contact Registration 
+// SCREEN 1: User Profile & Contact Registration
 function HomeScreen({ navigation }: { navigation: any }) {
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
+  const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [error, setError] = useState('');
 
@@ -77,7 +77,7 @@ function HomeScreen({ navigation }: { navigation: any }) {
             <View style={styles.mainPicture}>
               <Image
                 style={styles.imageSize}
-                source={require('./images/logo.png')} 
+                source={require('./images/logo.png')}
                 resizeMode="contain"
               />
             </View>
@@ -94,6 +94,7 @@ function HomeScreen({ navigation }: { navigation: any }) {
               <TextInput
                 style={styles.inputBox}
                 placeholder="e.g. Sarah"
+                placeholderTextColor="#A0A0A0"
                 onChangeText={(text) => setName(text)}
                 value={name}
               />
@@ -104,8 +105,22 @@ function HomeScreen({ navigation }: { navigation: any }) {
               <TextInput
                 style={styles.inputBox}
                 placeholder="e.g. Smith"
+                placeholderTextColor="#A0A0A0"
                 onChangeText={(text) => setSurname(text)}
                 value={surname}
+              />
+            </View>
+
+            <View style={styles.inputFlex}>
+              <Text style={styles.headingText}>Email:</Text>
+              <TextInput
+                style={styles.inputBox}
+                placeholder="e.g. sarah@example.com"
+                placeholderTextColor="#A0A0A0"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                onChangeText={(text) => setEmail(text)}
+                value={email}
               />
             </View>
 
@@ -114,6 +129,7 @@ function HomeScreen({ navigation }: { navigation: any }) {
               <TextInput
                 style={styles.inputBox}
                 placeholder="e.g. 0821234567"
+                placeholderTextColor="#A0A0A0"
                 keyboardType="phone-pad"
                 onChangeText={(text) => setPhone(text)}
                 value={phone}
@@ -125,11 +141,12 @@ function HomeScreen({ navigation }: { navigation: any }) {
                 title="Proceed to Course Selection"
                 color="#2E7D32"
                 onPress={() => {
-                  if (!isEmpty(name) && !isEmpty(surname) && !isEmpty(phone)) {
+                  if (!isEmpty(name) && !isEmpty(surname) && !isEmpty(email) && !isEmpty(phone)) {
                     setError('');
                     navigation.navigate('SelectCourses', {
                       userName: name,
                       userSurname: surname,
+                      userEmail: email,
                       userPhone: phone,
                     });
                   } else {
@@ -147,7 +164,7 @@ function HomeScreen({ navigation }: { navigation: any }) {
 
 // SCREEN 2: Course Selection & Discount Calculation
 function SelectCoursesScreen({ navigation, route }: { navigation: any; route: any }) {
-  const { userName, userSurname, userPhone } = route.params;
+  const { userName, userSurname, userEmail, userPhone } = route.params;
   const [selectedCourseId, setSelectedCourseId] = useState<string>('1');
   const [selectedCourses, setSelectedCourses] = useState<Course[]>([]);
 
@@ -205,8 +222,7 @@ function SelectCoursesScreen({ navigation, route }: { navigation: any; route: an
                 color="#2E7D32"
               />
               <Text style={styles.radioLabel}>
-                {course.name} ({course.type}) - R{course.fee} 
-
+                {course.name} ({course.type}) - R{course.fee}
               </Text>
             </View>
           ))}
@@ -217,12 +233,16 @@ function SelectCoursesScreen({ navigation, route }: { navigation: any; route: an
         <Button title="Add Selected Course" color="#2E7D32" onPress={handleAddCourse} />
       </View>
 
-      <Text style={styles.sectionTitle}>Your Selected Courses ({selectedCourses.length}):</Text>
+      <Text style={styles.sectionTitle}>
+        Your Selected Courses ({selectedCourses.length}):
+      </Text>
       {selectedCourses.map((item) => (
         <View key={item.id} style={styles.courseCard}>
           <View>
-            <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{item.name}</Text>
-            <Text style={{ color: '#FFFFFF' }}>
+            <Text style={{ fontWeight: 'bold', fontSize: 16, color: '#333333' }}>
+              {item.name}
+            </Text>
+            <Text style={{ color: '#666666' }}>
               {item.type} Programme | R{item.fee}
             </Text>
           </View>
@@ -246,70 +266,72 @@ function SelectCoursesScreen({ navigation, route }: { navigation: any; route: an
 
       <View style={{ marginVertical: 20 }}>
         <Button
-          title="Manage Custom Wishlist"
-          onPress={() => navigation.navigate('ManageEnrollments')}
+          title="Leave Feedback & Contact Info"
+          color="#2E7D32"
+          onPress={() => navigation.navigate('Feedback')}
         />
       </View>
     </ScrollView>
   );
 }
 
-// SCREEN 3: Interactive Dynamic Wishlist Manager 
-function ManageEnrollmentsScreen() {
-  const [customNotes, setCustomNotes] = useState<string[]>([]);
-  const [txtInput, setTxtInput] = useState<string>('');
+// SCREEN 3: Contact Information & Feedback Section
+function FeedbackScreen() {
+  const [feedback, setFeedback] = useState('');
 
-  const removeNoteHandler = (index: number) => {
-    setCustomNotes((currentNotes) => currentNotes.filter((_, i) => i !== index));
+  const handleFeedbackSubmit = () => {
+    if (!isEmpty(feedback)) {
+      Alert.alert('Thank You!', 'Feedback submitted successfully.');
+      setFeedback('');
+    } else {
+      Alert.alert('Error', 'Please enter your feedback before submitting.');
+    }
   };
 
   return (
     <View style={styles.appContainer}>
       <SafeAreaView style={{ flex: 1 }}>
-        <ScrollView>
-          <View style={styles.mainPicture}>
-            <Image
-              style={styles.bannerImage}
-              source={require('./images/logo.png')} 
-              resizeMode="contain"
-            />
-          </View>
-          <Text style={styles.welcomeText}>Special Requests & Goals</Text>
-          <Text style={{ textAlign: 'center', color: '#FFFFFF', marginBottom: 15 }}>
-            Add custom notes or specific pet goals for your instructor:
-          </Text>
-
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.textInput}
-              placeholder="e.g. House training advice for puppy"
-              onChangeText={(text) => setTxtInput(text)}
-              value={txtInput}
-            
-            />
-            <Button
-              title="Add Note"
-              color="#2E7D32"
-              onPress={() => {
-                if (!isEmpty(txtInput)) {
-                  setCustomNotes([...customNotes, txtInput]);
-                  setTxtInput('');
-                }
-              }}
-            />
+        <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
+          {/* Contact Information Section */}
+          <Text style={styles.feedbackHeading}>Contact information</Text>
+          <View style={styles.bulletList}>
+            <Text style={styles.bulletText}>• Company Number: +277 698 7742</Text>
+            <Text style={styles.bulletText}>• Email: pawsitivepetacademy@gmail.com</Text>
+            <Text style={styles.bulletText}>• Location: 17 Ridge St, Durban</Text>
           </View>
 
-          <View style={styles.skillsContainer}>
-            {customNotes.map((note, index) => (
-              <View key={index} style={styles.inputContainer}>
-                <Text style={styles.skillText}>{note}</Text>
-                <TouchableOpacity
-                  onPress={() => removeNoteHandler(index)}
-                  style={styles.deleteButton}>
-                  <Text style={styles.deleteButtonText}>Remove</Text>
-                </TouchableOpacity>
-              </View>
-            ))}
+          {/* Leave Feedback Section */}
+          <Text style={styles.feedbackHeading}>Leave Feedback</Text>
+          <TextInput
+            style={styles.textArea}
+            multiline
+            numberOfLines={5}
+            value={feedback}
+            onChangeText={setFeedback}
+            placeholder="Type your feedback here..."
+            placeholderTextColor="#A0A0A0"
+          />
+          <View style={styles.alignStart}>
+            <TouchableOpacity style={styles.greenButton} onPress={handleFeedbackSubmit}>
+              <Text style={styles.greenButtonText}>Submit Feedback</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Footer Section */}
+          <View style={styles.footerContainer}>
+            <Text style={styles.footerText}>
+              ©2026 Pawsitive Pet Academy. All rights reserved.
+            </Text>
+            <Text style={styles.footerText}>
+              Located in Durban | Providing Quality Pet Care Education Since 2023.
+            </Text>
+            <Text style={styles.footerText}>
+              You can find us on the social platforms:{' '}
+              <Text style={styles.linkText}>Call Us Now!</Text>{' '}
+              <Text style={styles.linkText}>X</Text>{' '}
+              <Text style={styles.linkText}>Instagram</Text>{' '}
+              <Text style={styles.linkText}>Facebook</Text>
+            </Text>
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -317,7 +339,7 @@ function ManageEnrollmentsScreen() {
   );
 }
 
-// STYLESHEET 
+// STYLESHEET
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -331,7 +353,7 @@ const styles = StyleSheet.create({
   },
   welcomeText: {
     paddingTop: 10,
-    color: '#2E7D32',
+    color: '#81C784',
     fontWeight: 'bold',
     fontSize: 28,
     textAlign: 'center',
@@ -354,16 +376,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     overflow: 'hidden',
     marginVertical: 15,
-    
   },
   imageSize: {
     width: 700,
     height: 500,
-  },
-  bannerImage: {
-    width: 700,
-    height: 500,
-    alignSelf: 'center',
   },
   inputFlex: {
     flexDirection: 'row',
@@ -389,7 +405,7 @@ const styles = StyleSheet.create({
   redError: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: 'red',
+    color: '#FF6B6B',
     paddingTop: 5,
     textAlign: 'center',
   },
@@ -400,7 +416,7 @@ const styles = StyleSheet.create({
   detailsHeader: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#2E7D32',
+    color: '#81C784',
     marginBottom: 15,
   },
   sectionTitle: {
@@ -408,7 +424,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 10,
     marginBottom: 8,
-    color: '#2E7D32',
+    color: '#81C784',
   },
   radioContainer: {
     backgroundColor: '#FFFFFF',
@@ -467,29 +483,7 @@ const styles = StyleSheet.create({
   appContainer: {
     flex: 1,
     paddingHorizontal: 16,
-    backgroundColor: 'rgb(75, 35, 18)',
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginVertical: 10,
-  },
-  textInput: {
-    color: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#ffffff',
-    borderRadius: 6,
-    width: '70%',
-    padding: 8,
-  },
-  skillsContainer: {
-    marginTop: 10,
-  },
-  skillText: {
-    fontSize: 14,
-    color: '#FFFFFF',
-    width: '75%',
+    backgroundColor: 'rgb(75, 35, 18)', // Brown background matching the app
   },
   deleteButton: {
     backgroundColor: '#D32F2F',
@@ -502,9 +496,69 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 12,
   },
+  /* Feedback Screen Styles */
+  feedbackHeading: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#81C784', // Bright green heading
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  bulletList: {
+    marginBottom: 10,
+    paddingLeft: 4,
+  },
+  bulletText: {
+    fontSize: 14,
+    color: '#FFFFFF', // White bullet text
+    marginVertical: 2,
+  },
+  textArea: {
+    borderWidth: 1,
+    borderColor: '#A5D6A7',
+    borderRadius: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    color: '#FFFFFF',
+    padding: 10,
+    textAlignVertical: 'top',
+    height: 120,
+    width: '100%',
+    marginBottom: 12,
+  },
+  alignStart: {
+    alignItems: 'flex-start',
+    marginBottom: 15,
+  },
+  greenButton: {
+    backgroundColor: '#2E7D32',
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    borderRadius: 6,
+  },
+  greenButtonText: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  footerContainer: {
+    marginTop: 20,
+    borderTopWidth: 1,
+    borderTopColor: '#5D2E14',
+    paddingTop: 15,
+  },
+  footerText: {
+    fontSize: 13,
+    color: '#E0E0E0',
+    marginVertical: 3,
+  },
+  linkText: {
+    color: '#81C784', // Green links for social platforms
+    textDecorationLine: 'underline',
+    fontWeight: '600',
+  },
 });
 
-// ANIMATION HELPER 
+// ANIMATION HELPER
 type FadeInViewProp = {
   children: ReactNode;
   style?: ViewStyle;
