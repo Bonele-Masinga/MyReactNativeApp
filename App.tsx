@@ -38,9 +38,14 @@ export default function App() {
           options={{ title: 'Pawsitive Pet Academy' }}
         />
         <Stack.Screen
+          name="About"
+          component={AboutScreen}
+          options={{ title: 'About Pawsitive Pet Academy' }}
+        />
+        <Stack.Screen
           name="SelectCourses"
           component={SelectCoursesScreen}
-          options={{ title: 'Select Courses & Quote' }}
+          options={{ title: 'Select Courses & Payment' }}
         />
         <Stack.Screen
           name="Feedback"
@@ -155,6 +160,14 @@ function HomeScreen({ navigation }: { navigation: any }) {
                 }}
               />
             </View>
+
+            <View style={[styles.buttonContainer, { marginTop: 12 }]}>
+              <Button
+                title="View About Us"
+                color="#558B2F"
+                onPress={() => navigation.navigate('About')}
+              />
+            </View>
           </FadeInView>
         </ScrollView>
       </SafeAreaView>
@@ -162,11 +175,105 @@ function HomeScreen({ navigation }: { navigation: any }) {
   );
 }
 
-// SCREEN 2: Course Selection & Discount Calculation
+// ABOUT SCREEN
+function AboutScreen() {
+  const [expandedSection, setExpandedSection] = useState<string | null>('vision');
+
+  const toggleSection = (section: string) => {
+    setExpandedSection(expandedSection === section ? null : section);
+  };
+
+  return (
+    <View style={styles.appContainer}>
+      <SafeAreaView style={{ flex: 1 }}>
+        <ScrollView contentContainerStyle={{ paddingBottom: 40, padding: 16 }}>
+          <Text style={[styles.welcomeText, { fontSize: 24, marginBottom: 15 }]}>
+            About Pawsitive Pet Academy
+          </Text>
+
+          <TouchableOpacity
+            style={styles.accordionHeader}
+            onPress={() => toggleSection('vision')}
+          >
+            <Text style={styles.accordionTitle}>Company Vision</Text>
+            <Text style={styles.accordionIcon}>{expandedSection === 'vision' ? '✕' : '+'}</Text>
+          </TouchableOpacity>
+          {expandedSection === 'vision' && (
+            <View style={styles.accordionBody}>
+              <Text style={styles.accordionText}>
+                At Pawsitive Pet Academy, we aim to improve the wellbeing of pets while creating meaningful employment opportunities for individuals interested in working in the pet care industry by sharing their passion and related businesses.
+              </Text>
+            </View>
+          )}
+
+          <TouchableOpacity
+            style={styles.accordionHeader}
+            onPress={() => toggleSection('mission')}
+          >
+            <Text style={styles.accordionTitle}>Company Mission</Text>
+            <Text style={styles.accordionIcon}>{expandedSection === 'mission' ? '✕' : '+'}</Text>
+          </TouchableOpacity>
+          {expandedSection === 'mission' && (
+            <View style={styles.accordionBody}>
+              <Text style={styles.accordionText}>
+                • To provide pet certification and post-formal education training for pets, owners, aspiring pet care professionals, and animal lovers.
+              </Text>
+              <Text style={styles.accordionText}>
+                • To bridge the accreditation gap by equipping people with essential skills in pet care, pet training, nutrition, and emergency care.
+              </Text>
+              <Text style={styles.accordionText}>
+                • To achieve a caring, trustworthy, and professional nature through its educational service and academy environment.
+              </Text>
+            </View>
+          )}
+
+          <TouchableOpacity
+            style={styles.accordionHeader}
+            onPress={() => toggleSection('goals')}
+          >
+            <Text style={styles.accordionTitle}>Company Goals</Text>
+            <Text style={styles.accordionIcon}>{expandedSection === 'goals' ? '✕' : '+'}</Text>
+          </TouchableOpacity>
+          {expandedSection === 'goals' && (
+            <View style={styles.accordionBody}>
+              <Text style={styles.accordionText}>
+                Here at Pawsitive Pet Academy we want to expand our business and to give a digital presence through a dedicated website and mobile application to administer the tax invoice, handle customer bookings and provide automated services. We want to be a flexible, key-accredited academy for pets, pet owners, staff, veterinary assistants, and aspiring entrepreneurs, ensuring ongoing establishment through forest diversity.
+              </Text>
+            </View>
+          )}
+
+          <TouchableOpacity
+            style={styles.accordionHeader}
+            onPress={() => toggleSection('history')}
+          >
+            <Text style={styles.accordionTitle}>Company History</Text>
+            <Text style={styles.accordionIcon}>{expandedSection === 'history' ? '✕' : '+'}</Text>
+          </TouchableOpacity>
+          {expandedSection === 'history' && (
+            <View style={styles.accordionBody}>
+              <Text style={styles.accordionText}>
+                Pawsitive Pet Academy was founded in 2023 in Durban, Since its inception, founders of pet training and aspiring pet care professionals have successfully completed IT courses, which serve to further professional development programmer and serve as premier practical courses.
+              </Text>
+            </View>
+          )}
+        </ScrollView>
+      </SafeAreaView>
+    </View>
+  );
+}
+
+// SCREEN 2: Course Selection, Quote & Secure Payment Section
 function SelectCoursesScreen({ navigation, route }: { navigation: any; route: any }) {
   const { userName, userSurname, userEmail, userPhone } = route.params;
   const [selectedCourseId, setSelectedCourseId] = useState<string>('1');
   const [selectedCourses, setSelectedCourses] = useState<Course[]>([]);
+
+  // Payment State Variables
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'eft' | 'cash'>('card');
+  const [cardName, setCardName] = useState('');
+  const [cardNumber, setCardNumber] = useState('');
+  const [expiry, setExpiry] = useState('');
+  const [cvv, setCvv] = useState('');
 
   // Add course to user selected batch
   const handleAddCourse = () => {
@@ -203,6 +310,25 @@ function SelectCoursesScreen({ navigation, route }: { navigation: any; route: an
   };
 
   const totals = calculateTotal();
+
+  const handlePaymentSubmit = () => {
+    if (selectedCourses.length === 0) {
+      Alert.alert('No Courses Selected', 'Please select at least one course before making a payment.');
+      return;
+    }
+
+    if (paymentMethod === 'card') {
+      if (isEmpty(cardName) || isEmpty(cardNumber) || isEmpty(expiry) || isEmpty(cvv)) {
+        Alert.alert('Incomplete Payment Details', 'Please fill out all card payment fields.');
+        return;
+      }
+    }
+
+    Alert.alert(
+      'Payment Successful!',
+      `Thank you ${userName}! Your payment of R${totals.finalTotal.toFixed(2)} has been processed successfully. A confirmation email has been sent to ${userEmail}.`
+    );
+  };
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: 'rgb(75, 35, 18)', padding: 16 }}>
@@ -256,12 +382,118 @@ function SelectCoursesScreen({ navigation, route }: { navigation: any; route: an
 
       {/* Quote Summary Box */}
       <View style={styles.quoteBox}>
-        <Text style={styles.quoteTitle}>Fee Breakdown</Text>
+        <Text style={styles.quoteTitle}>Fee Breakdown & Quote</Text>
         <Text style={styles.quoteText}>Subtotal: R{totals.rawTotal.toFixed(2)}</Text>
         <Text style={styles.quoteText}>
           Discount Tier: {totals.discountPercentage}% (-R{totals.discountAmount.toFixed(2)})
         </Text>
         <Text style={styles.quoteTotal}>Total Due: R{totals.finalTotal.toFixed(2)}</Text>
+      </View>
+
+      {/* Payment Section */}
+      <View style={styles.paymentContainer}>
+        <Text style={styles.quoteTitle}>Secure Payment</Text>
+        <Text style={styles.quoteText}>Select Payment Method:</Text>
+
+        <View style={styles.paymentRadioRow}>
+          <TouchableOpacity 
+            style={styles.paymentRadioOption} 
+            onPress={() => setPaymentMethod('card')}
+          >
+            <RadioButton.Android
+              value="card"
+              status={paymentMethod === 'card' ? 'checked' : 'unchecked'}
+              onPress={() => setPaymentMethod('card')}
+              color="#2E7D32"
+            />
+            <Text style={styles.paymentRadioLabel}>Credit / Debit Card</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.paymentRadioOption} 
+            onPress={() => setPaymentMethod('eft')}
+          >
+            <RadioButton.Android
+              value="eft"
+              status={paymentMethod === 'eft' ? 'checked' : 'unchecked'}
+              onPress={() => setPaymentMethod('eft')}
+              color="#2E7D32"
+            />
+            <Text style={styles.paymentRadioLabel}>EFT</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.paymentRadioOption} 
+            onPress={() => setPaymentMethod('cash')}
+          >
+            <RadioButton.Android
+              value="cash"
+              status={paymentMethod === 'cash' ? 'checked' : 'unchecked'}
+              onPress={() => setPaymentMethod('cash')}
+              color="#2E7D32"
+            />
+            <Text style={styles.paymentRadioLabel}>Cash</Text>
+          </TouchableOpacity>
+        </View>
+
+        {paymentMethod === 'card' ? (
+          <View style={{ marginTop: 10 }}>
+            <TextInput
+              style={styles.paymentInput}
+              placeholder="Cardholder Name"
+              placeholderTextColor="#888"
+              value={cardName}
+              onChangeText={setCardName}
+            />
+            <TextInput
+              style={styles.paymentInput}
+              placeholder="Card Number (XXXX-XXXX-XXXX-XXXX)"
+              placeholderTextColor="#888"
+              keyboardType="numeric"
+              value={cardNumber}
+              onChangeText={setCardNumber}
+            />
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <TextInput
+                style={[styles.paymentInput, { width: '48%' }]}
+                placeholder="MM/YY"
+                placeholderTextColor="#888"
+                value={expiry}
+                onChangeText={setExpiry}
+              />
+              <TextInput
+                style={[styles.paymentInput, { width: '48%' }]}
+                placeholder="CVV"
+                placeholderTextColor="#888"
+                keyboardType="numeric"
+                secureTextEntry
+                value={cvv}
+                onChangeText={setCvv}
+              />
+            </View>
+          </View>
+        ) : paymentMethod === 'eft' ? (
+          <View style={{ marginVertical: 10 }}>
+            <Text style={styles.quoteText}>
+              Bank: Standard Bank | Acc: 123456789 | Branch: 051001
+            </Text>
+            <Text style={styles.quoteText}>Use Reference: PPA-{userName.toUpperCase()}</Text>
+          </View>
+        ) : (
+          <View style={{ marginVertical: 10 }}>
+            <Text style={styles.quoteText}>
+              Please pay in-person at our Durban office (17 Ridge St) prior to class commencement.
+            </Text>
+          </View>
+        )}
+
+        <View style={{ marginTop: 15 }}>
+          <Button
+            title={`Complete Secure Payment (R${totals.finalTotal.toFixed(2)})`}
+            color="#1B5E20"
+            onPress={handlePaymentSubmit}
+          />
+        </View>
       </View>
 
       <View style={{ marginVertical: 20 }}>
@@ -480,10 +712,42 @@ const styles = StyleSheet.create({
     color: '#1B5E20',
     marginTop: 8,
   },
+  paymentContainer: {
+    backgroundColor: '#E8F5E9',
+    padding: 16,
+    borderRadius: 8,
+    marginTop: 15,
+    borderWidth: 1,
+    borderColor: '#A5D6A7',
+  },
+  paymentRadioRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: 8,
+  },
+  paymentRadioOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  paymentRadioLabel: {
+    fontSize: 13,
+    color: '#1B5E20',
+    fontWeight: 'bold',
+  },
+  paymentInput: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#A5D6A7',
+    borderRadius: 6,
+    padding: 8,
+    color: '#333333',
+    marginVertical: 6,
+    fontSize: 14,
+  },
   appContainer: {
     flex: 1,
     paddingHorizontal: 16,
-    backgroundColor: 'rgb(75, 35, 18)', // Brown background matching the app
+    backgroundColor: 'rgb(75, 35, 18)',
   },
   deleteButton: {
     backgroundColor: '#D32F2F',
@@ -496,11 +760,45 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 12,
   },
-  /* Feedback Screen Styles */
+  accordionHeader: {
+    backgroundColor: '#2E7D32',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 14,
+    borderRadius: 6,
+    marginTop: 10,
+  },
+  accordionTitle: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  accordionIcon: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  accordionBody: {
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    padding: 12,
+    borderBottomLeftRadius: 6,
+    borderBottomRightRadius: 6,
+    marginBottom: 5,
+    borderWidth: 1,
+    borderColor: '#2E7D32',
+    borderTopWidth: 0,
+  },
+  accordionText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    marginVertical: 4,
+    lineHeight: 20,
+  },
   feedbackHeading: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#81C784', // Bright green heading
+    color: '#81C784',
     marginTop: 16,
     marginBottom: 8,
   },
@@ -510,7 +808,7 @@ const styles = StyleSheet.create({
   },
   bulletText: {
     fontSize: 14,
-    color: '#FFFFFF', // White bullet text
+    color: '#FFFFFF',
     marginVertical: 2,
   },
   textArea: {
@@ -552,7 +850,7 @@ const styles = StyleSheet.create({
     marginVertical: 3,
   },
   linkText: {
-    color: '#81C784', // Green links for social platforms
+    color: '#81C784',
     textDecorationLine: 'underline',
     fontWeight: '600',
   },
