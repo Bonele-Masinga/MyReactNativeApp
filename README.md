@@ -100,18 +100,3 @@ This project integrates standard React Native navigation, state management, and 
   * [React Native Styling & Flexbox Guide](https://reactnative.dev/docs/flexbox)
   * UI Component Design Patterns via [YouTube - Not Just Dev React Native Tutorials](https://www.youtube.com/watch?v=ZBCjXtZV-wQ)
 
----
-
-## Getting Started & Installation
-
-1. **Clone or Download** the project repository.
-2. Install dependencies via npm or yarn:
-   ```bash
-   npm install
-
-3 Courses Selected: 10% Discount
-
-More than 3 Courses Selected: 15% Discount
-
-Screenshots
-Screenshots showing the registration flow, course fee breakdown, and custom request manager are included in the repository assets.
