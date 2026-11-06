@@ -64,6 +64,51 @@ Basic Dog Walking: 6-Week Programme (6 weeks) — R750
 Automatic Discount Tiers
 2 Courses Selected: 5% Discount
 
+# Pawsitive Pet Academy - React Native Mobile Application
+
+An interactive, cross-platform mobile application built with **React Native** and **Expo / React Navigation** designed for the Pawsitive Pet Academy. This application administers client registrations, course selections, tiered pricing discounts, secure checkout payments, institutional information, and user feedback.
+
+---
+
+## Project Overview & Code References
+
+This project integrates standard React Native navigation, state management, and UI libraries along with custom academic business logic derived from the Pawsitive Pet Academy curriculum and web development reference architectures.
+
+### 1. Navigation Architecture
+* **Implementation:** React Navigation (Native Stack v6).
+* **Reference & Documentation:** 
+  * [React Navigation Official Docs](https://reactnavigation.org/)
+  * [React Native Navigation Guide - GeeksforGeeks](https://www.geeksforgeeks.org/react-native-navigation/)
+  * React Native Core Concepts Tutorial via [YouTube - Academund React Native Course](https://www.youtube.com/watch?v=ANdSdIlgsug)
+
+### 2. Form State Management & Validation
+* **Implementation:** React hooks (`useState`, `useEffect`, `useRef`) combined with custom validation helpers (`isEmpty`).
+* **Reference & Documentation:**
+  * [React Hooks Documentation - React.dev](https://react.dev/reference/react)
+  * [React Native TextInput Component Guide](https://reactnative.dev/docs/textinput)
+  * Form Handling Best Practices via [YouTube - Programming with Mosh](https://www.youtube.com/watch?v=0-S5a0eXPoc)
+
+### 3. Course Catalog & Tiered Discount Business Logic
+* **Implementation:** Array manipulation (`find`, `reduce`, `filter`) mapping course types (`6-Month` and `6-Week`) to dynamic pricing and volume-based discounts (2 courses = 5%, 3 courses = 10%, >3 courses = 15%).
+* **Reference & Documentation:**
+  * [JavaScript Array Methods - MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
+  * Pawsitive Pet Academy Official Syllabus & Fee Policy Guidelines.
+
+### 4. UI Layouts, Accordions & Styling
+* **Implementation:** Flexbox layout styling (`StyleSheet`), `ScrollView`, `SafeAreaView`, `TouchableOpacity`, and custom interactive accordions for the About screen.
+* **Reference & Documentation:**
+  * [React Native Styling & Flexbox Guide](https://reactnative.dev/docs/flexbox)
+  * UI Component Design Patterns via [YouTube - Not Just Dev React Native Tutorials](https://www.youtube.com/watch?v=ZBCjXtZV-wQ)
+
+---
+
+## Getting Started & Installation
+
+1. **Clone or Download** the project repository.
+2. Install dependencies via npm or yarn:
+   ```bash
+   npm install
+
 3 Courses Selected: 10% Discount
 
 More than 3 Courses Selected: 15% Discount
